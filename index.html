@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mediafox - Social Network</title>
     <style>
-        /* ==========================================================================
-           1. VARIABILE ȘI REFRESH DE STILURI (CSS RESET)
-           ========================================================================== */
         :root {
             --primary: #ff6b35;
             --primary-hover: #e0531f;
@@ -32,7 +29,6 @@
             overflow: hidden;
         }
 
-        /* Utilitare vizuale */
         .hidden {
             display: none !important;
         }
@@ -45,9 +41,7 @@
             letter-spacing: -0.5px;
         }
 
-        /* ==========================================================================
-           2. INTERFAȚA DE AUTENTIFICARE (LOGIN)
-           ========================================================================== */
+        /* INTERFAȚA DE AUTENTIFICARE */
         .auth-container {
             display: flex;
             justify-content: center;
@@ -150,17 +144,13 @@
         .divider:not(:empty)::before { margin-right: .25em; }
         .divider:not(:empty)::after { margin-left: .25em; }
 
-
-        /* ==========================================================================
-           3. STRUCTURA PRINCIPALĂ (PANOU INTERN MODUL NAVIGAȚIE)
-           ========================================================================== */
+        /* INTERFAȚA PRINCIPALĂ */
         .app-layout {
             display: flex;
             height: 100vh;
             width: 100vw;
         }
 
-        /* Meniu Lateral (Sidebar) */
         .sidebar {
             width: var(--sidebar-width);
             background-color: #ffffff;
@@ -228,7 +218,6 @@
             background-color: #fff0f0;
         }
 
-        /* Zona de conținut din dreapta meniului */
         .main-content {
             flex-grow: 1;
             background-color: var(--bg-gray);
@@ -236,17 +225,13 @@
             height: 100%;
         }
 
-
-        /* ==========================================================================
-           4. MODULUL DE MESAGERIE (CHAT-BOX REPARAT)
-           ========================================================================== */
+        /* MODULUL DE MESAGERIE */
         .messenger-container {
             display: flex;
             height: 100%;
             background-color: #ffffff;
         }
 
-        /* Coloana Stângă - Listă Conversații */
         .chat-sidebar {
             width: 360px;
             border-right: 1px solid var(--border);
@@ -310,7 +295,6 @@
             font-size: 0.95rem;
         }
 
-        /* Coloana Dreaptă - Fereastră Chat Activă */
         .chat-window {
             flex-grow: 1;
             display: flex;
@@ -319,7 +303,6 @@
             position: relative;
         }
 
-        /* Ecran implicit (Fără conversație selectată) */
         .chat-empty-state {
             display: flex;
             flex-direction: column;
@@ -343,7 +326,6 @@
             margin-bottom: 8px;
         }
 
-        /* Zona de Mesaje Active */
         .chat-active-state {
             display: flex;
             flex-direction: column;
@@ -364,7 +346,7 @@
             cursor: pointer;
             margin-right: 15px;
             color: var(--text-muted);
-            display: none; /* Se activează doar pe rezoluții mobile */
+            display: none;
             line-height: 1;
         }
 
@@ -387,7 +369,6 @@
             gap: 10px;
         }
 
-        /* Stil Baloane Mesaje */
         .message-bubble {
             max-width: 60%;
             padding: 10px 14px;
@@ -407,7 +388,6 @@
             align-self: flex-end;
         }
 
-        /* Casetă Text de Trimitere */
         .chat-footer {
             padding: 15px 20px;
             border-top: 1px solid var(--border);
@@ -439,10 +419,6 @@
             background-color: var(--primary-hover);
         }
 
-
-        /* ==========================================================================
-           5. ADAPTARE AUTOMATĂ PE MOBIL / RESPONSIVE DESIGN
-           ========================================================================== */
         @media (max-width: 992px) {
             .sidebar {
                 width: 70px;
@@ -502,25 +478,42 @@
 </head>
 <body>
 
-    <!-- INTERFAȚA DE AUTENTIFICARE -->
+    <!-- INTERFAȚA DE AUTENTIFICARE / ÎNREGISTRARE -->
     <div id="auth-screen" class="auth-container">
-        <div class="auth-card">
+        <!-- FORMULAR LOGARE -->
+        <div id="login-card" class="auth-card">
             <a href="#" class="logo-fox">🦊 Mediafox</a>
             <p class="tagline">Conectează-te cu prietenii și împărtășește momente!</p>
             
             <form class="auth-form" onsubmit="handleLogin(event)">
-                <input type="text" placeholder="E-mail sau număr de telefon" required>
-                <input type="password" placeholder="Parolă" required>
+                <input id="login-email" type="text" placeholder="E-mail sau număr de telefon" required>
+                <input id="login-password" type="password" placeholder="Parolă" required>
                 <button type="submit" class="btn btn-primary">Autentificare</button>
             </form>
             
             <a href="#" class="forgot-password">Ai uitat parola?</a>
             <div class="divider">SAU</div>
-            <button class="btn btn-secondary" onclick="alert('Înregistrare simulată!')">Creează cont nou</button>
+            <button class="btn btn-secondary" onclick="showRegister()">Creează cont nou</button>
+        </div>
+
+        <!-- FORMULAR ÎNREGISTRARE REPARAT -->
+        <div id="register-card" class="auth-card hidden">
+            <a href="#" class="logo-fox">🦊 Mediafox</a>
+            <p class="tagline">Creează un cont nou simplu și rapid!</p>
+            
+            <form class="auth-form" onsubmit="handleRegister(event)">
+                <input id="reg-name" type="text" placeholder="Nume complet" required>
+                <input id="reg-email" type="email" placeholder="Adresă de e-mail" required>
+                <input id="reg-password" type="password" placeholder="Parolă nouă" required>
+                <button type="submit" class="btn btn-secondary" style="width: 100%; margin-top: 0;">Înregistrare</button>
+            </form>
+            
+            <div class="divider">SAU</div>
+            <a href="#" class="forgot-password" onclick="showLogin()">Ai deja un cont? Autentifică-te</a>
         </div>
     </div>
 
-    <!-- PANEL PRINCIPAL APLICAȚIE -->
+    <!-- APLICAȚIA PRINCIPALĂ -->
     <div id="app-screen" class="app-layout hidden">
         <aside class="sidebar">
             <div class="sidebar-header">
@@ -580,52 +573,96 @@
                             <span id="active-user-name" class="active-user-title">Nume Utilizator</span>
                         </div>
                         
-                        <div id="messages-box" class="messages-display">
-                            <!-- Mesajele dinamice vor fi încărcate aici -->
-                        </div>
+                        <div id="messages-box" class="messages-display"></div>
                         
                         <form class="chat-footer" onsubmit="sendMessage(event)">
                             <input id="message-input" type="text" placeholder="Scrie un mesaj..." autocomplete="off" required>
                             <button type="submit">Trimite</button>
                         </form>
                     </div>
-
                 </div>
             </div> 
-            
         </main>
     </div>
 
     <script>
-        // Logare utilizator
+        // Memorie locală simulată pentru utilizatori înregistrați
+        let registeredUsers = {
+            'test@mediafox.ro': 'parola123'
+        };
+
+        // Comutare ecrane autentificare
+        function showRegister() {
+            document.getElementById('login-card').classList.add('hidden');
+            document.getElementById('register-card').classList.remove('hidden');
+        }
+
+        function showLogin() {
+            document.getElementById('register-card').classList.add('hidden');
+            document.getElementById('login-card').classList.remove('hidden');
+        }
+
+        // Logică înregistrare cont nou
+        function handleRegister(event) {
+            event.preventDefault();
+            const name = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim().toLowerCase();
+            const password = document.getElementById('reg-password').value;
+
+            if (registeredUsers[email]) {
+                alert('Eroare: Acest cont/e-mail există deja!');
+                return;
+            }
+
+            // Salvare cont în memoria temporară
+            registeredUsers[email] = password;
+            alert('Contul pentru ' + name + ' a fost creat cu succes! Te poți loga acum.');
+            
+            // Curățare câmpuri și comutare la login
+            document.getElementById('reg-name').value = '';
+            document.getElementById('reg-email').value = '';
+            document.getElementById('reg-password').value = '';
+            showLogin();
+        }
+
+        // Logică logare cont
         function handleLogin(event) {
             event.preventDefault(); 
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('app-screen').classList.remove('hidden');
+            const email = document.getElementById('login-email').value.trim().toLowerCase();
+            const password = document.getElementById('login-password').value;
+
+            // Verificare credențiale în memoria temporară sau contul demo implicit
+            if (registeredUsers[email] === password || (email === 'admin' && password === 'admin')) {
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('app-screen').classList.remove('hidden');
+            } else {
+                alert('Eroare: E-mail sau parolă incorectă!');
+            }
         }
 
         // Deconectare utilizator
         function handleLogout() {
             document.getElementById('app-screen').classList.add('hidden');
             document.getElementById('auth-screen').classList.remove('hidden');
+            showLogin();
             
-            // Revenire la starea inițială chat
             closeChatMobile();
             document.getElementById('chat-active').classList.add('hidden');
             document.getElementById('chat-empty').classList.remove('hidden');
             
             const activeUser = document.querySelector('.user-item.active');
             if(activeUser) activeUser.classList.remove('active');
+            
+            document.getElementById('login-email').value = '';
+            document.getElementById('login-password').value = '';
         }
 
-        // Schimbare tab-uri meniu principal
         function changeTab(element) {
             const menuItems = document.querySelectorAll('.menu-item');
             menuItems.forEach(item => item.classList.remove('active'));
             element.classList.add('active');
         }
 
-        // Deschidere conversație dedicată user
         function openChat(element, name, avatar) {
             const users = document.querySelectorAll('.user-item');
             users.forEach(u => u.classList.remove('active'));
@@ -635,24 +672,20 @@
             document.getElementById('chat-empty').classList.add('hidden');
             document.getElementById('chat-active').classList.remove('hidden');
 
-            // Mesaje demo adaptate automat la utilizatorul selectat
             const msgBox = document.getElementById('messages-box');
             msgBox.innerHTML = `
                 <div class="message-bubble received">Salut! Eu sunt ${name} ${avatar}. Cu ce te pot ajuta azi?</div>
-                <div class="message-bubble sent">Salut! Doar testam sistemul de mesaje din noua aplicație Mediafox.</div>
+                <div class="message-bubble sent">Salut! Doar testam sistemul de mesaje din aplicație.</div>
             `;
             msgBox.scrollTop = msgBox.scrollHeight; 
 
-            // Control vizual pe ecrane de telefon mobil
             document.getElementById('messenger-wrapper').classList.add('active-chat-mobile');
         }
 
-        // Buton înapoi (Disponibil doar pe ecrane mici/mobile)
         function closeChatMobile() {
             document.getElementById('messenger-wrapper').classList.remove('active-chat-mobile');
         }
 
-        // Trimitere mesaje noi în fluxul de chat
         function sendMessage(event) {
             event.preventDefault();
             const input = document.getElementById('message-input');
@@ -661,8 +694,6 @@
             if (messageText === '') return;
 
             const msgBox = document.getElementById('messages-box');
-            
-            // Construire element HTML pentru mesaj trimis
             const newBubble = document.createElement('div');
             newBubble.className = 'message-bubble sent';
             newBubble.innerText = messageText;
@@ -671,7 +702,6 @@
             input.value = ''; 
             msgBox.scrollTop = msgBox.scrollHeight; 
 
-            // Răspuns automat simulat (1 secundă întârzieri)
             setTimeout(() => {
                 const replyBubble = document.createElement('div');
                 replyBubble.className = 'message-bubble received';
