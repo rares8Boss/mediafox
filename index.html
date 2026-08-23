@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mediafox - Social Network</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: #f0f2f5;
+    }
+
+    /* LOGIN PAGE */
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      background: #f0f2f5;
+    }
+
+    .login-left {
+      flex: 1;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      padding: 40px;
+    }
+
+    .login-left h1 {
+      font-size: 64px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .login-left p {
+      font-size: 28px;
+      margin-bottom: 40px;
+      max-width: 500px;
+    }
+
+    .login-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 432px;
+    }
+
+    .login-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      margin-bottom: 12px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+      background: #f0f2f5;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    input:focus {
+      border-color: #667eea;
+      background: white;
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .show-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: #667eea;
+      font-size: 13px;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #667eea;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .login-btn:hover {
+      background: #5568d9;
+    }
+
+    .login-btn:active {
+      transform: scale(0.98);
+    }
+
+    .message {
+      display: none;
+      margin: 12px 0;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .error {
+      display: block;
+      background: #ffe5e5;
+      color: #c62828;
+    }
+
+    .success {
+      display: block;
+      background: #e5f8e9;
+      color: #218838;
+    }
+
+    .divider {
+      text-align: center;
+      color: #65676b;
+      margin: 12px 0;
+      font-size: 13px;
+    }
+
+    .register-link {
+      display: block;
+      text-align: center;
+      color: #667eea;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .register-link:hover {
+      text-decoration: underline;
+    }
+
+    .forgot {
+      display: block;
+      text-align: center;
+      color: #667eea;
+      text-decoration: none;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+
+    /* MAIN PAGE */
+    .main-page {
+      min-height: 100vh;
+      background: #f0f2f5;
+    }
+
+    .header {
+      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      height: 60px;
+    }
+
+    .logo {
+      font-size: 32px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logout-btn {
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      background: #667eea;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: #5568d9;
+    }
+
+    /* MAIN LAYOUT */
+    .container {
+      max-width: 1200px;
+      margin: 16px auto;
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;
+      gap: 16px;
+      padding: 0 16px;
+    }
+
+    .sidebar {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      height: fit-content;
+      position: sticky;
+      top: 76px;
+    }
+
+    .sidebar-item {
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .sidebar-item:hover {
+      background: #f0f2f5;
+    }
+
+    .feed {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .create-post {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .post-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .avatar-small {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .post-input {
+      flex: 1;
+      padding: 12px 16px;
+      background: #f0f2f5;
+      border: none;
+      border-radius: 24px;
+      outline: none;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .post-input:focus {
+      background: #e4e6eb;
+    }
+
+    .post-actions {
+      display: flex;
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      background: none;
+      color: #65676b;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+
+    .action-btn:hover {
+      background: #f0f2f5;
+    }
+
+    .post-card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .post-header {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .post-user-info {
+      flex: 1;
+    }
+
+    .post-username {
+      font-weight: 600;
+      color: #333;
+      font-size: 15px;
+    }
+
+    .post-date {
+      font-size: 12px;
+      color: #65676b;
+    }
+
+    .post-body {
+      padding: 12px 16px;
+    }
+
+    .post-text {
+      font-size: 15px;
+      color: #333;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .post-image {
+      width: 100%;
+      max-height: 500px;
+      object-fit: cover;
+      margin-bottom: 12px;
+      border-radius: 8px;
+    }
+
+    .post-stats {
+      font-size: 13px;
+      color: #65676b;
+      padding: 8px 16px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .post-reactions {
+      display: flex;
+      gap: 8px;
+      padding: 8px 16px;
+    }
+
+    .reaction-btn {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      background: none;
+      color: #65676b;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    .reaction-btn:hover {
+      background: #f0f2f5;
+    }
+
+    .right-sidebar {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      height: fit-content;
+      position: sticky;
+      top: 76px;
+    }
+
+    .right-sidebar h3 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    /* CREATE POST MODAL */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 60px;
+      z-index: 200;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 16px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-header h2 {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #65676b;
+    }
+
+    .modal-body {
+      padding: 16px;
+    }
+
+    .modal-textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: inherit;
+      resize: vertical;
+      outline: none;
+    }
+
+    .modal-textarea:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    }
+
+    .file-input-wrapper {
+      margin: 12px 0;
+    }
+
+    .file-input-label {
+      display: inline-block;
+      padding: 8px 12px;
+      background: #667eea;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    .file-input-label:hover {
+      background: #5568d9;
+    }
+
+    #imageInput {
+      display: none;
+    }
+
+    .image-preview {
+      margin-top: 12px;
+      text-align: center;
+    }
+
+    .image-preview img {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .remove-image-btn {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 6px 12px;
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .remove-image-btn:hover {
+      background: #ff5252;
+    }
+
+    .modal-footer {
+      padding: 12px 16px;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      gap: 8px;
+    }
+
+    .publish-btn {
+      flex: 1;
+      padding: 10px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .publish-btn:hover {
+      background: #5568d9;
+    }
+
+    .publish-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .cancel-btn {
+      flex: 1;
+      padding: 10px;
+      background: #f0f2f5;
+      color: #333;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .cancel-btn:hover {
+      background: #e4e6eb;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: #65676b;
+      font-size: 15px;
+    }
+
+
+    /* MESSAGES */
+    .messages-page {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      height: calc(100vh - 92px);
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .messages-list {
+      border-right: 1px solid #e5e7eb;
+      overflow-y: auto;
+      background: #fff;
+    }
+
+    .messages-title {
+      padding: 18px 16px;
+      font-size: 20px;
+      font-weight: 700;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .conversation {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      border-bottom: 1px solid #f0f2f5;
+    }
+
+    .conversation:hover,
+    .conversation.active {
+      background: #f0f2f5;
+    }
+
+    .conversation-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .conversation-name {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .conversation-preview {
+      color: #65676b;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 3px;
+    }
+
+    .chat-window {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: #f8f9fa;
+    }
+
+    .chat-header {
+      background: white;
+      padding: 12px 16px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .chat-bubble {
+      max-width: 70%;
+      padding: 10px 14px;
+      border-radius: 18px;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+
+    .chat-bubble.mine {
+      align-self: flex-end;
+      background: #667eea;
+      color: white;
+      border-bottom-right-radius: 5px;
+    }
+
+    .chat-bubble.theirs {
+      align-self: flex-start;
+      background: #e4e6eb;
+      color: #222;
+      border-bottom-left-radius: 5px;
+    }
+
+    .chat-empty {
+      margin: auto;
+      text-align: center;
+      color: #65676b;
+    }
+
+    .chat-input-area {
+      background: white;
+      border-top: 1px solid #e5e7eb;
+      padding: 12px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-input {
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 22px;
+      padding: 10px 14px;
+      outline: none;
+      background: #f0f2f5;
+    }
+
+    .chat-send {
+      border: none;
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      background: #667eea;
+      color: white;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .messages-back {
+      display: none;
+      border: none;
+      background: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .messages-page {
+        height: calc(100vh - 76px);
+        display: block;
+      }
+
+      .messages-list {
+        height: 100%;
+        border-right: none;
+      }
+
+      .chat-window {
+        display: none;
+        height: 100%;
+      }
+
+      .messages-page.chat-open .messages-list {
+        display: none;
+      }
+
+      .messages-page.chat-open .chat-window {
+        display: flex;
+      }
+
+      .messages-back {
+        display: inline-block;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .container {
+        grid-template-columns: 1fr 2fr;
+      }
+      .right-sidebar {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        display: none;
+      }
+      .login-page {
+        flex-direction: column;
+      }
+      .login-left {
+        padding: 20px;
+        min-height: auto;
+      }
+    }
+  </style>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "PUNE_API_KEY_AICI",
+  authDomain: "PUNE_PROJECT_ID.firebaseapp.com",
+  projectId: "PUNE_PROJECT_ID",
+  storageBucket: "PUNE_PROJECT_ID.firebasestorage.app",
+  messagingSenderId: "PUNE_MESSAGING_SENDER_ID",
+  appId: "PUNE_APP_ID"
+};
+
+window.firebaseReady = !Object.values(firebaseConfig).some(v => String(v).includes("PUNE_"));
+
+if (window.firebaseReady) {
+  const app = initializeApp(firebaseConfig);
+  window.mfAuth = getAuth(app);
+  window.mfDb = getFirestore(app);
+  window.mf = { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, setDoc, getDoc };
+
+  onAuthStateChanged(window.mfAuth, user => {
+    if (user) {
+      localStorage.setItem("mediafox_current_user", user.displayName || user.email.split("@")[0]);
+      if (typeof showMainPage === "function") showMainPage();
+    }
+  });
+}
+</script>
+
+</head>
+
+<body>
+  <div class="login-page" id="loginPage">
+    <div class="login-left">
+      <h1>🦊 Mediafox</h1>
+      <p>Conectează-te cu prietenii și împărtășește momente!</p>
+    </div>
+    <div class="login-right">
+      <div class="login-container">
+        <div class="login-card">
+          <form id="loginForm">
+            <div class="input-group">
+              <input type="text" id="username" placeholder="Utilizator" autocomplete="username" required>
+            </div>
+            <div class="input-group password-wrapper">
+              <input type="password" id="password" placeholder="Parolă" autocomplete="current-password" required>
+              <button type="button" class="show-password" id="togglePassword">Arată</button>
+            </div>
+            <button type="submit" class="login-btn">Autentificare</button>
+            <div id="message" class="message"></div>
+          </form>
+        </div>
+
+        <div class="divider">SAU</div>
+
+        <div class="login-card">
+          <button type="button" class="login-btn" style="background: #31a24c;" onclick="showRegisterPage()">Creează cont nou</button>
+        </div>
+
+        <a href="#" class="forgot">Ai uitat parola?</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-page" id="mainPage" style="display: none;">
+    <div class="header">
+      <div class="header-content">
+        <div class="logo">🦊 Mediafox</div>
+        <button class="logout-btn" onclick="logout()">Deconectare</button>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="sidebar">
+        <div class="sidebar-item" onclick="showFeed()">📰 Feed</div>
+        <div class="sidebar-item" onclick="showProfile()">👤 Profil</div>
+        <div class="sidebar-item">🔔 Notificări</div>
+        <div class="sidebar-item" onclick="showMessages()">💬 Mesaje</div>
+        <div class="sidebar-item">⭐ Salvate</div>
+      </div>
+
+      <div class="feed" id="feed"></div>
+
+      <div class="right-sidebar">
+        <h3>Ce-i nou?</h3>
+        <p style="font-size: 13px; color: #65676b; line-height: 1.5;">Urmărește prietenii tăi și dă like la postările lor!</p>
+      </div>
+
+      <div id="messagesPage" style="display:none; grid-column: 1 / -1;">
+        <div class="messages-page" id="messagesContainer">
+          <div class="messages-list">
+            <div class="messages-title">Mesaje</div>
+            <div id="conversationList"></div>
+          </div>
+          <div class="chat-window">
+            <div class="chat-header">
+              <button class="messages-back" onclick="closeChat()">‹</button>
+              <div class="avatar-small" id="chatAvatar">?</div>
+              <div id="chatTitle">Selectează o conversație</div>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+              <div class="chat-empty">Selectează un utilizator pentru a începe conversația.</div>
+            </div>
+            <div class="chat-input-area">
+              <input id="chatInput" class="chat-input" type="text" placeholder="Scrie un mesaj..." autocomplete="off">
+              <button class="chat-send" onclick="sendMessage()">➤</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function escapeHtml(text) {
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function showLoginPage() {
+      document.getElementById('loginPage').style.display = 'flex';
+      document.getElementById('mainPage').style.display = 'none';
+    }
+
+    function showMainPage() {
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('mainPage').style.display = 'block';
+      showFeed();
+    }
+
+    async function logout() {
+      if (window.firebaseReady && window.mfAuth) await window.mf.signOut(window.mfAuth);
+      localStorage.removeItem("mediafox_current_user");
+      showLoginPage();
+    }
+
+    function showRegisterPage() {
+      const html = `
+        <div style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:300">
+          <div style="background:white;border-radius:8px;padding:20px;width:100%;max-width:432px">
+            <h2 style="font-size:32px;font-weight:800;margin-bottom:12px">Înregistrare</h2>
+            <p style="color:#65676b;margin-bottom:20px">Contul va fi salvat în cloud.</p>
+            <form id="registerForm" style="display:flex;flex-direction:column;gap:12px">
+              <input type="text" id="newUsername" placeholder="Nume de utilizator" minlength="3" required style="padding:12px 16px;border:1px solid #ccc;border-radius:8px">
+              <input type="email" id="newEmail" placeholder="Email" required style="padding:12px 16px;border:1px solid #ccc;border-radius:8px">
+              <input type="password" id="newPassword" placeholder="Parolă nouă" minlength="6" required style="padding:12px 16px;border:1px solid #ccc;border-radius:8px">
+              <input type="password" id="confirmPassword" placeholder="Confirmă parola" minlength="6" required style="padding:12px 16px;border:1px solid #ccc;border-radius:8px">
+              <button type="submit" class="login-btn" style="background:#31a24c">Creează cont</button>
+              <div id="registerMessage" class="message"></div>
+            </form>
+            <button onclick="location.reload()" style="width:100%;padding:10px;margin-top:12px;border:0;border-radius:6px">Înapoi</button>
+          </div>
+        </div>`;
+      document.body.insertAdjacentHTML('beforeend', html);
+
+      document.getElementById('registerForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const username = document.getElementById('newUsername').value.trim();
+        const email = document.getElementById('newEmail').value.trim();
+        const password = document.getElementById('newPassword').value;
+        const confirm = document.getElementById('confirmPassword').value;
+        const msg = document.getElementById('registerMessage');
+
+        if (password !== confirm) {
+          msg.textContent = 'Parolele nu coincid!';
+          msg.className = 'message error';
+          return;
+        }
+        if (!window.firebaseReady) {
+          msg.textContent = 'Firebase nu este configurat încă.';
+          msg.className = 'message error';
+          return;
+        }
+
+        try {
+          const cred = await window.mf.createUserWithEmailAndPassword(window.mfAuth, email, password);
+          await window.mf.updateProfile(cred.user, { displayName: username });
+          await window.mf.setDoc(window.mf.doc(window.mfDb, "users", cred.user.uid), {
+            username, email, createdAt: window.mf.serverTimestamp()
+          });
+          localStorage.setItem("mediafox_current_user", username);
+          msg.textContent = 'Cont creat și salvat în cloud! 🎉';
+          msg.className = 'message success';
+          setTimeout(showMainPage, 700);
+        } catch (err) {
+          msg.textContent = err.code === 'auth/email-already-in-use'
+            ? 'Acest email este deja folosit.'
+            : 'Nu s-a putut crea contul.';
+          msg.className = 'message error';
+        }
+      });
+    }
+
+
+    async function getCloudPosts() {
+      const q = window.mf.query(
+        window.mf.collection(window.mfDb, "posts"),
+        window.mf.orderBy("createdAt", "desc")
+      );
+      const snap = await window.mf.getDocs(q);
+      return snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    }
+
+    async function showFeed() {
+      document.getElementById('messagesPage').style.display = 'none';
+      document.getElementById('feed').style.display = '';
+      document.querySelector('.right-sidebar').style.display = '';
+      const currentUser = localStorage.getItem('mediafox_current_user') || 'User';
+      const feed = document.getElementById('feed');
+
+      let html = `<div class="create-post">
+        <div class="post-input-wrapper">
+          <div class="avatar-small">${escapeHtml(currentUser.charAt(0).toUpperCase())}</div>
+          <div class="post-input" onclick="openCreatePostModal()">Ce gândești?</div>
+        </div>
+        <div class="post-actions">
+          <button class="action-btn" onclick="openCreatePostModal()">🖼️ Foto/Video</button>
+          <button class="action-btn">😊 Sentiment</button>
+          <button class="action-btn">📍 Locație</button>
+        </div>
+      </div>`;
+
+      if (!window.firebaseReady) {
+        feed.innerHTML = html + '<div class="empty">Configurează Firebase pentru a încărca postările din cloud.</div>';
+        return;
+      }
+
+      try {
+        const posts = await getCloudPosts();
+        if (!posts.length) {
+          html += '<div class="empty">Nicio postare încă. Fii primul!</div>';
+        } else {
+          html += posts.map(p => `
+            <div class="post-card">
+              <div class="post-header">
+                <div class="avatar-small">${escapeHtml((p.username || '?').charAt(0).toUpperCase())}</div>
+                <div class="post-user-info">
+                  <div class="post-username">${escapeHtml(p.username || 'Utilizator')}</div>
+                  <div class="post-date">${escapeHtml(p.date || '')}</div>
+                </div>
+              </div>
+              <div class="post-body">
+                <div class="post-text">${escapeHtml(p.text || '')}</div>
+                ${p.image ? `<img src="${p.image}" class="post-image" alt="Post">` : ''}
+              </div>
+              <div class="post-stats">${p.likes || 0} oameni le place asta</div>
+              <div class="post-reactions">
+                <button class="reaction-btn" onclick="likePost('${p.id}')">👍 Îmi place</button>
+                <button class="reaction-btn">💬 Comentează</button>
+                <button class="reaction-btn">↗️ Distribuie</button>
+              </div>
+            </div>`).join('');
+        }
+      } catch (e) {
+        console.error(e);
+        html += '<div class="empty">Nu am putut încărca postările din cloud.</div>';
+      }
+      feed.innerHTML = html;
+    }
+
+    async function likePost(id) {
+      if (!window.firebaseReady) return;
+      const ref = window.mf.doc(window.mfDb, "posts", id);
+      const snap = await window.mf.getDoc(ref);
+      if (snap.exists()) {
+        await window.mf.setDoc(ref, { likes: (snap.data().likes || 0) + 1 }, { merge:true });
+        showFeed();
+      }
+    }
+
+
+    function openCreatePostModal() {
+      const html = `
+        <div class="modal-overlay" onclick="if(event.target === this) closeCreatePostModal()">
+          <div class="modal">
+            <div class="modal-header">
+              <h2>Creează o postare</h2>
+              <button class="close-btn" onclick="closeCreatePostModal()">×</button>
+            </div>
+            <div class="modal-body">
+              <textarea id="postText" class="modal-textarea" placeholder="Ce gândești?"></textarea>
+              
+              <div class="file-input-wrapper">
+                <label for="imageInput" class="file-input-label">🖼️ Adaugă poza</label>
+                <input type="file" id="imageInput" accept="image/*">
+              </div>
+
+              <div class="image-preview" id="imagePreview"></div>
+            </div>
+            <div class="modal-footer">
+              <button class="cancel-btn" onclick="closeCreatePostModal()">Anulează</button>
+              <button class="publish-btn" onclick="publishPost()">Postează</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', html);
+      setupImagePreview();
+    }
+
+    function closeCreatePostModal() {
+      const modal = document.querySelector('.modal-overlay');
+      if (modal) modal.remove();
+    }
+
+    function setupImagePreview() {
+      const imageInput = document.getElementById('imageInput');
+      const imagePreview = document.getElementById('imagePreview');
+
+      imageInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            imagePreview.innerHTML = `
+              <img src="${event.target.result}" alt="Preview">
+              <br>
+              <button type="button" class="remove-image-btn" onclick="removeImage()">Șterge poza</button>
+            `;
+            imageInput.dataset.imageData = event.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    function removeImage() {
+      const imageInput = document.getElementById('imageInput');
+      const imagePreview = document.getElementById('imagePreview');
+      imageInput.value = '';
+      imagePreview.innerHTML = '';
+      delete imageInput.dataset.imageData;
+    }
+
+    async function publishPost() {
+      const text = document.getElementById('postText').value.trim();
+      const imageInput = document.getElementById('imageInput');
+      if (!text) {
+        alert('Scrie ceva înainte să postezi!');
+        return;
+      }
+      if (!window.firebaseReady) {
+        alert('Firebase nu este configurat încă.');
+        return;
+      }
+
+      try {
+        await window.mf.addDoc(window.mf.collection(window.mfDb, "posts"), {
+          username: localStorage.getItem('mediafox_current_user'),
+          text,
+          image: imageInput?.dataset?.imageData || null,
+          likes: 0,
+          date: new Date().toLocaleString('ro-RO'),
+          createdAt: window.mf.serverTimestamp()
+        });
+        closeCreatePostModal();
+        showFeed();
+      } catch (e) {
+        console.error(e);
+        alert('Postarea nu a putut fi salvată în cloud.');
+      }
+    }
+
+
+    function showProfile() {
+      document.getElementById('messagesPage').style.display = 'none';
+      document.getElementById('feed').style.display = '';
+      document.querySelector('.right-sidebar').style.display = '';
+      const currentUser = localStorage.getItem('mediafox_current_user');
+      const userPosts = JSON.parse(localStorage.getItem('mediafox_posts') || '[]')
+        .filter(p => p.username === currentUser);
+
+      const feed = document.getElementById('feed');
+      let html = `
+        <div class="post-card" style="text-align: center; padding: 40px;">
+          <div class="avatar-small" style="width: 100px; height: 100px; font-size: 50px; margin: 0 auto 20px;">
+            ${currentUser.charAt(0).toUpperCase()}
+          </div>
+          <h1 style="font-size: 32px; font-weight: 800; margin-bottom: 8px;">${escapeHtml(currentUser)}</h1>
+          <p style="color: #65676b; font-size: 15px; margin-bottom: 20px;">@${escapeHtml(currentUser)}</p>
+          <div style="display: flex; gap: 30px; justify-content: center; margin-bottom: 20px;">
+            <div><strong style="font-size: 20px;">${userPosts.length}</strong><br><span style="color: #65676b; font-size: 13px;">Postări</span></div>
+            <div><strong style="font-size: 20px;">0</strong><br><span style="color: #65676b; font-size: 13px;">Urmăritori</span></div>
+            <div><strong style="font-size: 20px;">0</strong><br><span style="color: #65676b; font-size: 13px;">Urmărești</span></div>
+          </div>
+        </div>
+      `;
+
+      if (userPosts.length === 0) {
+        html += '<div class="empty">Nicio postare încă.</div>';
+      } else {
+        html += userPosts.map((post, idx) => `
+          <div class="post-card">
+            <div class="post-header">
+              <div class="avatar-small">${post.username.charAt(0).toUpperCase()}</div>
+              <div class="post-user-info">
+                <div class="post-username">${escapeHtml(post.username)}</div>
+                <div class="post-date">${escapeHtml(post.date)}</div>
+              </div>
+            </div>
+            <div class="post-body">
+              <div class="post-text">${escapeHtml(post.text)}</div>
+              ${post.image ? `<img src="${post.image}" class="post-image" alt="Post">` : ''}
+            </div>
+            <div class="post-stats">${post.likes} oameni le place asta</div>
+            <div class="post-reactions">
+              <button class="reaction-btn">👍 Îmi place</button>
+              <button class="reaction-btn">💬 Comentează</button>
+              <button class="reaction-btn">↗️ Distribuie</button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      feed.innerHTML = html;
+    }
+
+
+    // MESSAGES
+    let activeChatUser = null;
+
+    function getUsersForMessages() {
+      const users = [];
+      const savedAccount = JSON.parse(localStorage.getItem('mediafox_user') || 'null');
+      const current = localStorage.getItem('mediafox_current_user');
+
+      if (savedAccount && savedAccount.username && savedAccount.username !== current) {
+        users.push(savedAccount.username);
+      }
+
+      // Include users that appear in posts.
+      const posts = JSON.parse(localStorage.getItem('mediafox_posts') || '[]');
+      posts.forEach(post => {
+        if (post.username && post.username !== current && !users.includes(post.username)) {
+          users.push(post.username);
+        }
+      });
+
+      // Always make the admin available when another user is logged in.
+      if (current !== 'admin' && !users.includes('admin')) users.unshift('admin');
+
+      return users;
+    }
+
+    function getMessages() {
+      return JSON.parse(localStorage.getItem('mediafox_messages') || '[]');
+    }
+
+    function saveMessages(messages) {
+      localStorage.setItem('mediafox_messages', JSON.stringify(messages));
+    }
+
+    function showMessages() {
+      document.getElementById('feed').style.display = 'none';
+      document.querySelector('.right-sidebar').style.display = 'none';
+      document.getElementById('messagesPage').style.display = 'block';
+      activeChatUser = null;
+      renderConversationList();
+      document.getElementById('chatMessages').innerHTML =
+        '<div class="chat-empty">Selectează un utilizator pentru a începe conversația.</div>';
+      document.getElementById('chatTitle').textContent = 'Selectează o conversație';
+      document.getElementById('chatAvatar').textContent = '?';
+      document.getElementById('messagesContainer').classList.remove('chat-open');
+    }
+
+    function renderConversationList() {
+      const list = document.getElementById('conversationList');
+      const current = localStorage.getItem('mediafox_current_user');
+      const users = getUsersForMessages();
+      const messages = getMessages();
+
+      if (users.length === 0) {
+        list.innerHTML = '<div class="empty">Nu există alți utilizatori încă.</div>';
+        return;
+      }
+
+      list.innerHTML = users.map(user => {
+        const pair = messages.filter(m =>
+          (m.from === current && m.to === user) ||
+          (m.from === user && m.to === current)
+        );
+        const last = pair[pair.length - 1];
+        return `
+          <div class="conversation ${activeChatUser === user ? 'active' : ''}" onclick="openChat('${escapeHtml(user).replace(/'/g, "\\'")}')">
+            <div class="avatar-small">${escapeHtml(user.charAt(0).toUpperCase())}</div>
+            <div class="conversation-info">
+              <div class="conversation-name">${escapeHtml(user)}</div>
+              <div class="conversation-preview">${last ? escapeHtml(last.text) : 'Începe o conversație'}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openChat(user) {
+      activeChatUser = user;
+      const current = localStorage.getItem('mediafox_current_user');
+
+      document.getElementById('chatTitle').textContent = user;
+      document.getElementById('chatAvatar').textContent = user.charAt(0).toUpperCase();
+      document.getElementById('messagesContainer').classList.add('chat-open');
+
+      renderConversationList();
+
+      const messages = getMessages().filter(m =>
+        (m.from === current && m.to === user) ||
+        (m.from === user && m.to === current)
+      );
+
+      const box = document.getElementById('chatMessages');
+
+      if (messages.length === 0) {
+        box.innerHTML = '<div class="chat-empty">Niciun mesaj. Spune „Salut”! 👋</div>';
+      } else {
+        box.innerHTML = messages.map(m => `
+          <div class="chat-bubble ${m.from === current ? 'mine' : 'theirs'}">
+            ${escapeHtml(m.text)}
+          </div>
+        `).join('');
+      }
+
+      box.scrollTop = box.scrollHeight;
+      document.getElementById('chatInput').focus();
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      const current = localStorage.getItem('mediafox_current_user');
+
+      if (!activeChatUser || !text || !current) return;
+
+      const messages = getMessages();
+      messages.push({
+        from: current,
+        to: activeChatUser,
+        text: text,
+        date: new Date().toISOString()
+      });
+
+      saveMessages(messages);
+      input.value = '';
+      openChat(activeChatUser);
+    }
+
+    function closeChat() {
+      activeChatUser = null;
+      document.getElementById('messagesContainer').classList.remove('chat-open');
+      renderConversationList();
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' &&
+          document.activeElement &&
+          document.activeElement.id === 'chatInput') {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // INITIALIZATION
+    const loginForm = document.getElementById('loginForm');
+    const username = document.getElementById('username');
+    const password = document.getElementById('password');
+    const message = document.getElementById('message');
+    const togglePassword = document.getElementById('togglePassword');
+
+    togglePassword.addEventListener('click', () => {
+      if (password.type === 'password') {
+        password.type = 'text';
+        togglePassword.textContent = 'Ascunde';
+      } else {
+        password.type = 'password';
+        togglePassword.textContent = 'Arată';
+      }
+    });
+
+    loginForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const user = username.value.trim();
+      const pass = password.value;
+      message.className = 'message';
+      message.textContent = '';
+
+      if (!window.firebaseReady) {
+        message.textContent = 'Firebase nu este configurat încă.';
+        message.className = 'message error';
+        return;
+      }
+
+      try {
+        const cred = await window.mf.signInWithEmailAndPassword(window.mfAuth, user, pass);
+        let name = cred.user.displayName;
+        if (!name) {
+          const s = await window.mf.getDoc(window.mf.doc(window.mfDb, "users", cred.user.uid));
+          name = s.exists() ? s.data().username : cred.user.email.split("@")[0];
+        }
+        localStorage.setItem("mediafox_current_user", name);
+        showMainPage();
+      } catch (err) {
+        message.textContent = 'Email sau parolă incorectă!';
+        message.className = 'message error';
+      }
+    });
+
+    // CHECK IF USER IS LOGGED IN
+    if (!window.firebaseReady) {
+      console.warn("Firebase nu este configurat încă.");
+    }
+  </script>
+</body>
+</html>
