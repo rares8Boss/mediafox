@@ -599,6 +599,183 @@
       font-size: 15px;
     }
 
+
+    /* MESSAGES */
+    .messages-page {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      height: calc(100vh - 92px);
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .messages-list {
+      border-right: 1px solid #e5e7eb;
+      overflow-y: auto;
+      background: #fff;
+    }
+
+    .messages-title {
+      padding: 18px 16px;
+      font-size: 20px;
+      font-weight: 700;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .conversation {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      border-bottom: 1px solid #f0f2f5;
+    }
+
+    .conversation:hover,
+    .conversation.active {
+      background: #f0f2f5;
+    }
+
+    .conversation-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .conversation-name {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .conversation-preview {
+      color: #65676b;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 3px;
+    }
+
+    .chat-window {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: #f8f9fa;
+    }
+
+    .chat-header {
+      background: white;
+      padding: 12px 16px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .chat-bubble {
+      max-width: 70%;
+      padding: 10px 14px;
+      border-radius: 18px;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+
+    .chat-bubble.mine {
+      align-self: flex-end;
+      background: #667eea;
+      color: white;
+      border-bottom-right-radius: 5px;
+    }
+
+    .chat-bubble.theirs {
+      align-self: flex-start;
+      background: #e4e6eb;
+      color: #222;
+      border-bottom-left-radius: 5px;
+    }
+
+    .chat-empty {
+      margin: auto;
+      text-align: center;
+      color: #65676b;
+    }
+
+    .chat-input-area {
+      background: white;
+      border-top: 1px solid #e5e7eb;
+      padding: 12px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-input {
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 22px;
+      padding: 10px 14px;
+      outline: none;
+      background: #f0f2f5;
+    }
+
+    .chat-send {
+      border: none;
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      background: #667eea;
+      color: white;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .messages-back {
+      display: none;
+      border: none;
+      background: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .messages-page {
+        height: calc(100vh - 76px);
+        display: block;
+      }
+
+      .messages-list {
+        height: 100%;
+        border-right: none;
+      }
+
+      .chat-window {
+        display: none;
+        height: 100%;
+      }
+
+      .messages-page.chat-open .messages-list {
+        display: none;
+      }
+
+      .messages-page.chat-open .chat-window {
+        display: flex;
+      }
+
+      .messages-back {
+        display: inline-block;
+      }
+    }
+
     @media (max-width: 1024px) {
       .container {
         grid-template-columns: 1fr 2fr;
@@ -672,7 +849,7 @@
         <div class="sidebar-item" onclick="showFeed()">📰 Feed</div>
         <div class="sidebar-item" onclick="showProfile()">👤 Profil</div>
         <div class="sidebar-item">🔔 Notificări</div>
-        <div class="sidebar-item">💬 Mesaje</div>
+        <div class="sidebar-item" onclick="showMessages()">💬 Mesaje</div>
         <div class="sidebar-item">⭐ Salvate</div>
       </div>
 
@@ -681,6 +858,29 @@
       <div class="right-sidebar">
         <h3>Ce-i nou?</h3>
         <p style="font-size: 13px; color: #65676b; line-height: 1.5;">Urmărește prietenii tăi și dă like la postările lor!</p>
+      </div>
+
+      <div id="messagesPage" style="display:none; grid-column: 1 / -1;">
+        <div class="messages-page" id="messagesContainer">
+          <div class="messages-list">
+            <div class="messages-title">Mesaje</div>
+            <div id="conversationList"></div>
+          </div>
+          <div class="chat-window">
+            <div class="chat-header">
+              <button class="messages-back" onclick="closeChat()">‹</button>
+              <div class="avatar-small" id="chatAvatar">?</div>
+              <div id="chatTitle">Selectează o conversație</div>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+              <div class="chat-empty">Selectează un utilizator pentru a începe conversația.</div>
+            </div>
+            <div class="chat-input-area">
+              <input id="chatInput" class="chat-input" type="text" placeholder="Scrie un mesaj..." autocomplete="off">
+              <button class="chat-send" onclick="sendMessage()">➤</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -757,6 +957,9 @@
     }
 
     function showFeed() {
+      document.getElementById('messagesPage').style.display = 'none';
+      document.getElementById('feed').style.display = '';
+      document.querySelector('.right-sidebar').style.display = '';
       const currentUser = localStorage.getItem('mediafox_current_user');
       const posts = JSON.parse(localStorage.getItem('mediafox_posts') || '[]');
       const feed = document.getElementById('feed');
@@ -901,6 +1104,9 @@
     }
 
     function showProfile() {
+      document.getElementById('messagesPage').style.display = 'none';
+      document.getElementById('feed').style.display = '';
+      document.querySelector('.right-sidebar').style.display = '';
       const currentUser = localStorage.getItem('mediafox_current_user');
       const userPosts = JSON.parse(localStorage.getItem('mediafox_posts') || '[]')
         .filter(p => p.username === currentUser);
@@ -949,6 +1155,149 @@
 
       feed.innerHTML = html;
     }
+
+
+    // MESSAGES
+    let activeChatUser = null;
+
+    function getUsersForMessages() {
+      const users = [];
+      const savedAccount = JSON.parse(localStorage.getItem('mediafox_user') || 'null');
+      const current = localStorage.getItem('mediafox_current_user');
+
+      if (savedAccount && savedAccount.username && savedAccount.username !== current) {
+        users.push(savedAccount.username);
+      }
+
+      // Include users that appear in posts.
+      const posts = JSON.parse(localStorage.getItem('mediafox_posts') || '[]');
+      posts.forEach(post => {
+        if (post.username && post.username !== current && !users.includes(post.username)) {
+          users.push(post.username);
+        }
+      });
+
+      // Always make the admin available when another user is logged in.
+      if (current !== 'admin' && !users.includes('admin')) users.unshift('admin');
+
+      return users;
+    }
+
+    function getMessages() {
+      return JSON.parse(localStorage.getItem('mediafox_messages') || '[]');
+    }
+
+    function saveMessages(messages) {
+      localStorage.setItem('mediafox_messages', JSON.stringify(messages));
+    }
+
+    function showMessages() {
+      document.getElementById('feed').style.display = 'none';
+      document.querySelector('.right-sidebar').style.display = 'none';
+      document.getElementById('messagesPage').style.display = 'block';
+      activeChatUser = null;
+      renderConversationList();
+      document.getElementById('chatMessages').innerHTML =
+        '<div class="chat-empty">Selectează un utilizator pentru a începe conversația.</div>';
+      document.getElementById('chatTitle').textContent = 'Selectează o conversație';
+      document.getElementById('chatAvatar').textContent = '?';
+      document.getElementById('messagesContainer').classList.remove('chat-open');
+    }
+
+    function renderConversationList() {
+      const list = document.getElementById('conversationList');
+      const current = localStorage.getItem('mediafox_current_user');
+      const users = getUsersForMessages();
+      const messages = getMessages();
+
+      if (users.length === 0) {
+        list.innerHTML = '<div class="empty">Nu există alți utilizatori încă.</div>';
+        return;
+      }
+
+      list.innerHTML = users.map(user => {
+        const pair = messages.filter(m =>
+          (m.from === current && m.to === user) ||
+          (m.from === user && m.to === current)
+        );
+        const last = pair[pair.length - 1];
+        return `
+          <div class="conversation ${activeChatUser === user ? 'active' : ''}" onclick="openChat('${escapeHtml(user).replace(/'/g, "\\'")}')">
+            <div class="avatar-small">${escapeHtml(user.charAt(0).toUpperCase())}</div>
+            <div class="conversation-info">
+              <div class="conversation-name">${escapeHtml(user)}</div>
+              <div class="conversation-preview">${last ? escapeHtml(last.text) : 'Începe o conversație'}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openChat(user) {
+      activeChatUser = user;
+      const current = localStorage.getItem('mediafox_current_user');
+
+      document.getElementById('chatTitle').textContent = user;
+      document.getElementById('chatAvatar').textContent = user.charAt(0).toUpperCase();
+      document.getElementById('messagesContainer').classList.add('chat-open');
+
+      renderConversationList();
+
+      const messages = getMessages().filter(m =>
+        (m.from === current && m.to === user) ||
+        (m.from === user && m.to === current)
+      );
+
+      const box = document.getElementById('chatMessages');
+
+      if (messages.length === 0) {
+        box.innerHTML = '<div class="chat-empty">Niciun mesaj. Spune „Salut”! 👋</div>';
+      } else {
+        box.innerHTML = messages.map(m => `
+          <div class="chat-bubble ${m.from === current ? 'mine' : 'theirs'}">
+            ${escapeHtml(m.text)}
+          </div>
+        `).join('');
+      }
+
+      box.scrollTop = box.scrollHeight;
+      document.getElementById('chatInput').focus();
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      const current = localStorage.getItem('mediafox_current_user');
+
+      if (!activeChatUser || !text || !current) return;
+
+      const messages = getMessages();
+      messages.push({
+        from: current,
+        to: activeChatUser,
+        text: text,
+        date: new Date().toISOString()
+      });
+
+      saveMessages(messages);
+      input.value = '';
+      openChat(activeChatUser);
+    }
+
+    function closeChat() {
+      activeChatUser = null;
+      document.getElementById('messagesContainer').classList.remove('chat-open');
+      renderConversationList();
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' &&
+          document.activeElement &&
+          document.activeElement.id === 'chatInput') {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
 
     // INITIALIZATION
     const loginForm = document.getElementById('loginForm');
