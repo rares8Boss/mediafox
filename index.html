@@ -806,6 +806,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { getStorage, ref as storageRef, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAK-8b1XYBsxXuytGo6zVONnJTmMViDMdA",
@@ -823,7 +824,8 @@ if (window.firebaseReady) {
   const app = initializeApp(firebaseConfig);
   window.mfAuth = getAuth(app);
   window.mfDb = getFirestore(app);
-  window.mf = { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, setDoc, getDoc };
+  window.mfStorage = getStorage(app);
+  window.mf = { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, setDoc, getDoc, storageRef, uploadString, getDownloadURL };
 
   onAuthStateChanged(window.mfAuth, user => {
     if (user) {
@@ -1146,6 +1148,7 @@ if (window.firebaseReady) {
     async function publishPost() {
       const text = document.getElementById('postText').value.trim();
       const imageInput = document.getElementById('imageInput');
+      const imageData = imageInput?.dataset?.imageData || null;
       if (!text) {
         alert('Scrie ceva înainte să postezi!');
         return;
@@ -1155,11 +1158,25 @@ if (window.firebaseReady) {
         return;
       }
 
+      const publishBtn = document.querySelector('.publish-btn');
+      if (publishBtn) { publishBtn.disabled = true; publishBtn.textContent = 'Se postează...'; }
+
       try {
+        let imageUrl = null;
+        if (imageData) {
+          // Pozele mari (peste ~1MB, orice poză de telefon) nu încap într-un
+          // document Firestore, deci le urcăm în Firebase Storage și salvăm
+          // doar link-ul rezultat în postare.
+          const path = `posts/${Date.now()}_${Math.random().toString(36).slice(2)}`;
+          const imgRef = window.mf.storageRef(window.mfStorage, path);
+          await window.mf.uploadString(imgRef, imageData, 'data_url');
+          imageUrl = await window.mf.getDownloadURL(imgRef);
+        }
+
         await window.mf.addDoc(window.mf.collection(window.mfDb, "posts"), {
           username: localStorage.getItem('mediafox_current_user'),
           text,
-          image: imageInput?.dataset?.imageData || null,
+          image: imageUrl,
           likes: 0,
           date: new Date().toLocaleString('ro-RO'),
           createdAt: window.mf.serverTimestamp()
@@ -1169,6 +1186,8 @@ if (window.firebaseReady) {
       } catch (e) {
         console.error(e);
         alert('Postarea nu a putut fi salvată în cloud.');
+      } finally {
+        if (publishBtn) { publishBtn.disabled = false; publishBtn.textContent = 'Postează'; }
       }
     }
 
