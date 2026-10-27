@@ -1149,45 +1149,98 @@ if (window.firebaseReady) {
       const text = document.getElementById('postText').value.trim();
       const imageInput = document.getElementById('imageInput');
       const imageData = imageInput?.dataset?.imageData || null;
+      const publishBtn = document.querySelector('.publish-btn');
+
       if (!text) {
         alert('Scrie ceva înainte să postezi!');
         return;
       }
-      if (!window.firebaseReady) {
-        alert('Firebase nu este configurat încă.');
+
+      if (!window.firebaseReady || !window.mfDb || !window.mfStorage) {
+        alert('Firebase nu este inițializat corect. Verifică configurația.');
         return;
       }
 
-      const publishBtn = document.querySelector('.publish-btn');
-      if (publishBtn) { publishBtn.disabled = true; publishBtn.textContent = 'Se postează...'; }
+      if (publishBtn?.disabled) return;
+
+      if (publishBtn) {
+        publishBtn.disabled = true;
+        publishBtn.textContent = 'Se postează...';
+      }
+
+      const withTimeout = (promise, ms, operation) => {
+        let timer;
+        const timeout = new Promise((_, reject) => {
+          timer = setTimeout(() => {
+            reject(new Error(
+              `TIMEOUT: ${operation} nu a răspuns în ${Math.round(ms / 1000)} secunde.`
+            ));
+          }, ms);
+        });
+
+        return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+      };
 
       try {
         let imageUrl = null;
+
         if (imageData) {
-          // Pozele mari (peste ~1MB, orice poză de telefon) nu încap într-un
-          // document Firestore, deci le urcăm în Firebase Storage și salvăm
-          // doar link-ul rezultat în postare.
           const path = `posts/${Date.now()}_${Math.random().toString(36).slice(2)}`;
           const imgRef = window.mf.storageRef(window.mfStorage, path);
-          await window.mf.uploadString(imgRef, imageData, 'data_url');
-          imageUrl = await window.mf.getDownloadURL(imgRef);
+
+          await withTimeout(
+            window.mf.uploadString(imgRef, imageData, 'data_url'),
+            30000,
+            'Încărcarea fotografiei în Firebase Storage'
+          );
+
+          imageUrl = await withTimeout(
+            window.mf.getDownloadURL(imgRef),
+            15000,
+            'Obținerea linkului fotografiei'
+          );
         }
 
-        await window.mf.addDoc(window.mf.collection(window.mfDb, "posts"), {
-          username: localStorage.getItem('mediafox_current_user'),
-          text,
-          image: imageUrl,
-          likes: 0,
-          date: new Date().toLocaleString('ro-RO'),
-          createdAt: window.mf.serverTimestamp()
-        });
+        await withTimeout(
+          window.mf.addDoc(window.mf.collection(window.mfDb, 'posts'), {
+            username: localStorage.getItem('mediafox_current_user') || 'User',
+            text,
+            image: imageUrl,
+            likes: 0,
+            date: new Date().toLocaleString('ro-RO'),
+            createdAt: window.mf.serverTimestamp()
+          }),
+          20000,
+          'Salvarea postării în Cloud Firestore'
+        );
+
         closeCreatePostModal();
-        showFeed();
+        await showFeed();
+
       } catch (e) {
-        console.error(e);
-        alert('Postarea nu a putut fi salvată în cloud.');
+        console.error('Mediafox publishPost:', e);
+
+        const code = e?.code ? `${e.code}
+` : '';
+        const details = e?.message || String(e);
+
+        alert(
+          'Postarea nu a putut fi publicată.
+
+' +
+          code + details +
+          '
+
+Verifică conexiunea la internet și regulile Firebase.'
+        );
+
       } finally {
-        if (publishBtn) { publishBtn.disabled = false; publishBtn.textContent = 'Postează'; }
+        // Caută butonul din nou: modalul poate să fi fost închis.
+        const currentButton = document.querySelector('.publish-btn');
+        if (currentButton) {
+          currentButton.disabled = false;
+          currentButton.textContent = 'Postează';
+        }
       }
     }
 
