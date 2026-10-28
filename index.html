@@ -1011,7 +1011,15 @@ if (window.firebaseReady) {
         window.mf.orderBy("createdAt", "desc"),
         window.mf.limit(20)
       );
-      const snap = await window.mf.getDocs(q);
+
+      // Don't leave the Feed spinning forever if Firestore is unreachable.
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error(
+          "Firestore nu a răspuns în 10 secunde. Verifică regulile Firestore, conexiunea și consola browserului."
+        )), 10000)
+      );
+
+      const snap = await Promise.race([window.mf.getDocs(q), timeout]);
       return snap.docs.map(d => ({ id: d.id, ...d.data() }));
     }
 
@@ -1067,8 +1075,9 @@ if (window.firebaseReady) {
             </div>`).join('');
         }
       } catch (e) {
-        console.error(e);
-        html += '<div class="empty">Nu am putut încărca postările din cloud.</div>';
+        console.error("Mediafox Feed error:", e);
+        const details = escapeHtml(e?.message || String(e));
+        feed.innerHTML = html + `<div class="empty">Postările nu s-au încărcat.<br><small>${details}</small></div>`;
       }
       feed.innerHTML = html;
     }
