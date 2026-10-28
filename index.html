@@ -247,6 +247,32 @@
       top: 76px;
     }
 
+
+    .nav-icon {
+      width: 24px;
+      height: 24px;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 9px;
+      object-fit: contain;
+      flex: 0 0 24px;
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+    }
+    .nav-svg {
+      width: 23px;
+      height: 23px;
+      margin-right: 10px;
+      flex: 0 0 23px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
     .sidebar-item {
       padding: 12px;
       margin: 8px 0;
@@ -881,11 +907,11 @@ if (window.firebaseReady) {
 
     <div class="container">
       <div class="sidebar">
-        <div class="sidebar-item" onclick="showFeed()">📰 Feed</div>
-        <div class="sidebar-item" onclick="showProfile()">👤 Profil</div>
-        <div class="sidebar-item">🔔 Notificări</div>
-        <div class="sidebar-item" onclick="showMessages()">💬 Mesaje</div>
-        <div class="sidebar-item">⭐ Salvate</div>
+        <div class="sidebar-item" onclick="showFeed()"><img class="nav-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADkAAABACAYAAACgNd+MAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGQSURBVGhD7ZQxbsQwDAT9nPt/k/4+dkEOUDO2JZJeyorBAbahZC2n8fZZgG3bvski72UjTTBTNOdVIxTMEtW/aIRijBLtaw4odRQVupccUOYsKnQvGaHIKAo0rxihQMv79fMN5yrR6y8Y4eIUzBS99rURLnwmmCUa/9IBl41KRkVjXzngkiPBkWiE2FdGuKBVUC3q/8IIF4tIqkR9tx1wqYjg0pJcKCqoErXfNMJFrgoqRG23jHCBGZIW0fENByxXCbbw3emSLFYLtvB9i2j/1AgLswRb2DMSPT8xwqK7c8Tx1AgLVgnZTxzw8VVC9hMHfHyVkP3ECQvuzhHH0wAsm50e/VMHLG3h718RdoxEz0+csDBLsIVdJclBFBaWpCDsKkkOorCwJAVhV0lyEIWFJSkIu0qSgygsLElB2FWSHERhYUkKwq6S5CAKC0tSEHbdJpklyo6e4B/9Uycsnpke/VMnLJ6ZHv3TACyfkRHjGwG4RGYs2G4F4ULKePDd/qeU5FMoyadQkk+hJJ9CST6FXxJsFnYO/3tRAAAAAElFTkSuQmCC" alt="Feed">Feed</div>
+        <div class="sidebar-item" onclick="showProfile()"><svg class="nav-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4.2 3.2-7 8-7s8 2.8 8 7"></path></svg>Profil</div>
+        <div class="sidebar-item"><svg class="nav-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg>Notificări</div>
+        <div class="sidebar-item" onclick="showMessages()"><svg class="nav-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 9 9 0 0 1-4-.9L3 21l1.9-5.5a9 9 0 0 1-.9-4A8.5 8.5 0 0 1 12.5 3H13a8 8 0 0 1 8 8z"></path></svg>Mesaje</div>
+        <div class="sidebar-item"><svg class="nav-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9z"></path></svg>Salvate</div>
       </div>
 
       <div class="feed" id="feed"></div>
@@ -1037,9 +1063,9 @@ if (window.firebaseReady) {
           <div class="post-input" onclick="openCreatePostModal()">Ce gândești?</div>
         </div>
         <div class="post-actions">
-          <button class="action-btn" onclick="openCreatePostModal()">🖼️ Foto/Video</button>
-          <button class="action-btn">😊 Sentiment</button>
-          <button class="action-btn">📍 Locație</button>
+          <button class="action-btn" onclick="openCreatePostModal()"><svg class="nav-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="8.5" cy="9" r="1.5"></circle><path d="m21 15-5-5L5 20"></path></svg>Foto/Video</button>
+          <button class="action-btn"><svg class="nav-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><path d="M9 9h.01M15 9h.01"></path></svg>Sentiment</button>
+          <button class="action-btn"><svg class="nav-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Locație</button>
         </div>
       </div>`;
 
